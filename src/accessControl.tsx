@@ -8,13 +8,13 @@ const STORAGE_FIELD = Symbol();
 function useReturnToApp<State extends BasicState, LayoutProps extends BasicLayoutProps<State>>(
   config?: Config<State, LayoutProps>
 ) {
-  const { useActualState, getDefaultRoute } = { ...defaultConfig, ...config };
+  const { useActualState, getDefaultPath } = { ...defaultConfig, ...config };
   const actualState = useActualState() as State;
   const history = useHistory();
   const { location: { state } } = history;
 
   function returnToApp() {
-    const to = (state as LocationState)?.[STORAGE_FIELD] || getDefaultRoute(actualState);
+    const to = (state as LocationState)?.[STORAGE_FIELD] || getDefaultPath(actualState);
     history.replace(to);
   }
 
@@ -27,7 +27,7 @@ function withAccessControl<State extends BasicState, LayoutProps extends BasicLa
   layoutProps?: Omit<LayoutProps, 'children' | 'state'>,
   config?: Config<State, LayoutProps>
 ): ComponentType {
-  const { useActualState, getDefaultRoute, composeState, StateDependentLayout } = { ...defaultConfig, ...config };
+  const { useActualState, getDefaultPath, composeState, StateDependentLayout } = { ...defaultConfig, ...config };
   return props => {
     const history = useHistory();
     const actualState = useActualState() as State;
@@ -36,7 +36,7 @@ function withAccessControl<State extends BasicState, LayoutProps extends BasicLa
     if (!fits(actualState)) {
       const savedPath = (state as LocationState)?.[STORAGE_FIELD];
       const to = {
-        pathname: savedPath || getDefaultRoute(actualState),
+        pathname: savedPath || getDefaultPath(actualState),
         state: composeState(savedPath ? undefined : { [STORAGE_FIELD]: pathname })
       };
       return <Redirect to={to} />;

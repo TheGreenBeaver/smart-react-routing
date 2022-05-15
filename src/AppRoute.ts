@@ -1,11 +1,12 @@
 import AppLink from './AppLink';
 import { withAccessControl } from './accessControl';
 import { ComponentType } from 'react';
-import { BasicState, BasicLayoutProps } from './config';
+import defaultConfig, { BasicState, BasicLayoutProps, Config } from './config';
 
-type Options<State extends BasicState> = {
+type Options<State extends BasicState, LayoutProps extends BasicLayoutProps<State>> = {
   exact?: boolean,
-  requiredState: State
+  config?: Config<State, LayoutProps>,
+  layoutProps?: Omit<LayoutProps, 'children' | 'state'>
 };
 
 class AppRoute<State extends BasicState, LayoutProps extends BasicLayoutProps<State>> {
@@ -13,14 +14,20 @@ class AppRoute<State extends BasicState, LayoutProps extends BasicLayoutProps<St
   path: string;
   exact: boolean;
   component: ComponentType;
+  protected static defaultConfig = defaultConfig;
 
-  constructor(appLink: AppLink | string, component: ComponentType, {
-    exact = true,
-    requiredState
-  }: Options<State>) {
+  constructor(appLink: AppLink | string, component: ComponentType, requiredState: State, {
+    exact = true, config, layoutProps
+  }: Options<State, LayoutProps> = {}) {
     this.path = appLink instanceof AppLink ? appLink.path : appLink;
     this.exact = exact;
-    this.component = withAccessControl<State, LayoutProps>(component, actualState => this.fits(requiredState, actualState));
+    this.component = withAccessControl<State, LayoutProps>(
+      component,
+        actualState => this.fits(requiredState, actualState),
+      layoutProps,
+      config || (AppRoute.defaultConfig as Config<State, LayoutProps>
+      )
+    );
   }
 
   protected compareStateFieldValue(

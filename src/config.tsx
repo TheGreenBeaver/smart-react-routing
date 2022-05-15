@@ -4,7 +4,7 @@ export type BasicState = Record<string, any>;
 export type BasicLayoutProps<State extends BasicState> = { children: ReactNode, state: State };
 type FullConfig<State extends BasicState, LayoutProps extends BasicLayoutProps<State>> = {
   useActualState: () => State,
-  getDefaultRoute: (actualState: State) => string,
+  getDefaultPath: (actualState: State) => string,
   composeState: (accessControlState: { [key: symbol]: string } | undefined) => Record<string | symbol, any> | undefined,
   StateDependentLayout: ComponentType<LayoutProps>
 };
@@ -14,7 +14,7 @@ export type Config<State extends BasicState, LayoutProps extends BasicLayoutProp
 const DefaultLayout: FunctionComponent<BasicLayoutProps<{}>> = ({ children }) => <>{children}</>;
 const defaultConfig: FullConfig<{}, BasicLayoutProps<{}>> = {
   useActualState: () => ({}),
-  getDefaultRoute: () => '/',
+  getDefaultPath: () => '/',
   composeState: accessControlState => accessControlState,
   StateDependentLayout: DefaultLayout
 };
