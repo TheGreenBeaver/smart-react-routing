@@ -1,6 +1,6 @@
 {
   "name": "smart-react-routing",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A library to structure the routing logic in an app using react-router",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -15,12 +15,13 @@
     "url": "git+https://github.com/TheGreenBeaver/smart-react-routing.git"
   },
   "files": [
-    "/lib"
+    "/lib",
+    "/scripts"
   ],
   "bin": {
-    "init": "scripts/init.js",
-    "add-page-group": "scripts/add-page-group.js",
-    "add-page": "scripts/add-page.js"
+    "init": "./scripts/init.js",
+    "add-page-group": "./scripts/add-page-group.js",
+    "add-page": "./scripts/add-page.js"
   },
   "keywords": [],
   "author": "TheGreenBeaver",
