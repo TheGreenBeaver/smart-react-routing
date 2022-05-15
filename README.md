@@ -97,7 +97,7 @@ A class to configure the behaviour for a specific Route
 
 *appLink*
 
-Type: `string` | [`AppLink`](###applink)
+Type: `string` | [`AppLink`](#applink)
 
 Represents the `path` prop for the corresponding `<Route />`
 
@@ -123,15 +123,15 @@ Type: `boolean`
 
 *config* (optional)
 
-Type: [`Config`](###config)
+Type: [`Config`](#config)
 
-The [Config](###config) to use for this exact Route. If nothing is specified, `AppRoute.defaultConfig` is used.
+The [Config](#config) to use for this exact Route. If nothing is specified, `AppRoute.defaultConfig` is used.
 
 *layoutProps* (optional)
 
 Type: `LayoutProps`
 
-Props for `<StateDependentLayout />` (see [Config](###config) for details).
+Props for `<StateDependentLayout />` (see [Config](#config) for details).
 
 ### Config
 
@@ -180,7 +180,7 @@ changed in a way that would trigger automatic redirection.
 
 *config* (optional)
 
-Type: [Config](###config)
+Type: [Config](#config)
 
 ### Customization
 
