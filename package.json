@@ -1,7 +1,7 @@
 {
   "name": "smart-react-routing",
   "packageManager": "yarn@3.2.0",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A library to structure the routing logic in an app using react-router",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
