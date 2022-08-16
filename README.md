@@ -98,16 +98,17 @@ Type: () => `AppState`
 
 The hook to access the Application State that defines the accessibility of the pages.
 
-*getDefaultPath*
+*getDefaultPath* (optional)
 
 Type: (currentAppState: `AppState`, history: `History`) => `string`
 
 If the user visits some page they should not at current state, they get redirected to the last suitable page they've
 visited (its path is stored in `location.state`). If they haven't yet, the path returned by this function is used.
+The default logic for this function is to always return '/';
 
 *Wrapper*
 
-Type: `React.ComponentType`
+Type: `React.ComponentType` (optional)
 
 Allows wrapping the pages in some state-dependent layout. The Application State will be passed as `currentAppState`.
 Should also accept `children`.
@@ -149,9 +150,9 @@ can use it for some "wildcard" situations, when any state is suitable.
 
 Type: `boolean`
 
-`exact` prop for `<Route />`.
+`exact` prop for `<Route />`. `true` by default.
 
-*wrapperProps*
+*wrapperProps* (optional)
 
 Any extra props to be passed to the Wrapper (other than `children` and `currentAppState`).
 
