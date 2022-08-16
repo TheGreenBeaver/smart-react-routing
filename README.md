@@ -142,8 +142,8 @@ The component to render at the path.
 Type: `AppState`
 
 The package is based on the idea that each Route can only be accessed if the application is in a certain State. This
-parameter should represent such state. There's a special static constant on the AppRoute class, `AppRoute.ANY` - you can
-use it for some "wildcard" situations, when any state is suitable.
+parameter should represent such state. There's a special static constant on the AppRouting class, `AppRouting.ANY` - you
+can use it for some "wildcard" situations, when any state is suitable.
 
 *exact* (optional)
 
