@@ -113,7 +113,7 @@ Type: `React.ComponentType` (optional)
 Allows wrapping the pages in some state-dependent layout. The Application State will be passed as `currentAppState`.
 Should also accept `children`.
 
-*fits*
+*fits* (optional)
 
 Type: (currentAppState: `AppState`, requiredAppState: `AppState`) => `boolean`
 
