@@ -1,13 +1,33 @@
 #!/usr/bin/env node
-const childProcess = require('child_process');
+const yargs = require('yargs');
+const fs = require('fs');
 
-const args = process.argv.slice(2);
-const scriptNames = ['add-page', 'add-page-group', 'init'];
-const scriptIndex = args.findIndex(x => scriptNames.includes(x));
-const script = scriptIndex === -1 ? args[0] : args[scriptIndex];
+let config = {};
+try {
+  fs.accessSync('srr-config.json');
+  config = JSON.parse(fs.readFileSync('srr-config.json').toString());
+} catch {}
 
-if (scriptNames.includes(script)) {
-  childProcess.execSync(
-    ['node', require.resolve('./' + script), ...args.slice(scriptIndex + 1)].join(' ')
-  );
-}
+yargs
+  .commandDir('./commands', {
+    exclude: /_utils\.js/
+  })
+  .options({
+    root: {
+      default: 'src',
+      description: 'The root directory of your project',
+      type: 'string'
+    },
+    ts: {
+      default: false,
+      description: 'Use TypeScript template',
+      type: 'boolean'
+    }
+  })
+  .config(config)
+  .demandCommand(1, 1)
+  .strict()
+  .help()
+  .argv
+
+

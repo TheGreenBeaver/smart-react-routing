@@ -1,0 +1,10 @@
+{
+  "extends": "./base-tsconfig.json",
+  "include": ["src", "examples/typescript"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "smart-react-routing": ["./src"]
+    }
+  }
+}

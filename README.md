@@ -1,6 +1,6 @@
 # smart-react-routing
 
-This tiny library is designed to organize the routing logic in an app using react-router.
+This tiny library is designed to organize the routing logic in an app using [React Router](https://v5.reactrouter.com/).
 
 ## Install
 
@@ -16,24 +16,21 @@ $ npm install smart-react-routing
 $ yarn add smart-react-routing
 ```
 
-## Usage
+## Basic Usage
 
 ```jsx
-import { AppLink, AppRoute as BaseAppRoute } from 'smart-react-routing';
+import { AppLink, AppRouting } from 'smart-react-routing';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useHistory, BrowserRouter, Route, Switch } from 'react-router-dom';
 
-
 const homeLink = new AppLink('/home/:accountId');
 const signInLink = new AppLink('/sign_in');
 
-class AppRoute extends BaseAppRoute {
-  static defaultConfig = {
-    useActualState: () => useSelector(state => state.account),
-    getDefaultPath: ({ isAuthorized }) => isAuthorized ? homeLink.path : signInLink.path
-  };
-}
+const appRouting = new AppRouting(
+  () => useSelector(state => state.account),
+  { getDefaultPath: ({ isAuthorized }) => isAuthorized ? homeLink.path : signInLink.path }
+);
 
 function Home() {
   return <h1>Home</h1>;
@@ -47,8 +44,8 @@ function SignIn() {
   return <button onClick={signIn}>Sign In</button>;
 }
 
-const homeRoute = new AppRoute(homeLink, Home, { isAuthorized: true });
-const signInRoute = new AppRoute(signInLink, SignIn, { isAuthorized: false });
+const homeRoute = appRouting.createAppRoute(homeLink, Home, { isAuthorized: true });
+const signInRoute = appRouting.createAppRoute(signInLink, SignIn, { isAuthorized: false });
 
 function App() {
   return (
@@ -87,124 +84,83 @@ Replaces colon-separated parameters with actual values
 Type: `string` | `number` | `object`
 
 The actual values to insert. If more parameters are passed then there are placeholders in the path, the last one is
-treated as a query string object
+treated as a query object and is stringified using [query-string](https://www.npmjs.com/package/query-string);
 
-### AppRoute
+### AppRouting
 
-A class to configure the behaviour for a specific Route
+Instances of this class define the behaviour of the routes you create.
 
-#### constructor(appLink, component, requiredState, { exact, config, layoutProps })
+#### constructor(useCurrentAppState, { getDefaultPath, Wrapper, fits })
 
-*appLink*
+*useCurrentAppState*
 
-Type: `string` | [`AppLink`](#applink)
+Type: () => `AppState`
 
-Represents the `path` prop for the corresponding `<Route />`
+The hook to access the Application State that defines the accessibility of the pages.
 
-*component*
+*getDefaultPath*
+
+Type: (currentAppState: `AppState`, history: `History`) => `string`
+
+If the user visits some page they should not at current state, they get redirected to the last suitable page they've
+visited (its path is stored in `location.state`). If they haven't yet, the path returned by this function is used.
+
+*Wrapper*
 
 Type: `React.ComponentType`
 
-The component to render at the path
+Allows wrapping the pages in some state-dependent layout. The Application State will be passed as `currentAppState`.
+Should also accept `children`.
 
-*requiredState*
+*fits*
+
+Type: (currentAppState: `AppState`, requiredAppState: `AppState`) => `boolean`
+
+Allows overriding the way the current AppState is compared to the required one. By default, `true` is returned if all
+the field values of the required state are either equal to the corresponding values of the current state or set
+to `AppRouting.ANY`.
+
+#### .createAppRoute(appLink, Component, requiredAppState, { exact, wrapperProps })
+
+Returns: { component: `React.ComponentType`, path: `string`, exact: `boolean` } - an object ready to be passed
+to `<Route />` as props.
+
+*appLink*
+
+Type: [`AppLink`](#appLink) | `string`
+
+Represents the `path` prop for the corresponding `<Route />`.
+
+*Component*
+
+Type: `React.ComponentType`
+
+The component to render at the path.
+
+*requiredAppState*
 
 Type: `AppState`
 
 The package is based on the idea that each Route can only be accessed if the application is in a certain State. This
-argument should represent such state. There's a special static constant on the AppRoute class, `AppRoute.ANY` - you can
+parameter should represent such state. There's a special static constant on the AppRoute class, `AppRoute.ANY` - you can
 use it for some "wildcard" situations, when any state is suitable.
 
 *exact* (optional)
 
 Type: `boolean`
 
-`exact` prop for `<Route />`
+`exact` prop for `<Route />`.
 
-*config* (optional)
+*wrapperProps*
 
-Type: [`Config`](#config)
+Any extra props to be passed to the Wrapper (other than `children` and `currentAppState`).
 
-The [Config](#config) to use for this exact Route. If nothing is specified, `AppRoute.defaultConfig` is used.
+#### .useReturnToDesiredPage()
 
-*layoutProps* (optional)
+Returns: () => `void`
 
-Type: `LayoutProps`
-
-Props for `<StateDependentLayout />` (see [Config](#config) for details).
-
-### Config
-
-#### useActualState()
-
-Returns: AppState
-
-The hook to access the Application State that defines the accessibility of the pages.
-
-#### getDefaultPath(actualConfig)
-
-Returns: string
-
-If the user visits some page they should not at current state, the path of that page is stored in
-`location.state`, and after the state becomes suitable, user gets redirected back to the page they wanted to visit
-initially. However, if the state is not suitable for current page anymore and there's no stored path, the one returned
-by this function will be used.
-
-*actualConfig*
-
-Type: AppConfig
-
-#### composeState(accessControlState)
-
-Returns: `object`
-
-This allows you to modify `location.state` before redirects.
-
-*accessControlState*
-
-Type: `{ STORED_PATH }`
-
-#### StateDependentLayout
-
-`React.ComponentType<LayoutProps>`
-
-Allows wrapping the AppRoute component in some state-dependent layout. The Application State will be
-passed as `state`. Should also accept `children`.
-
-### useReturnToApp(config)
-
-Returns: `function`
-
-Use this when you need to redirect the user to his previous location, but the Application State has not
-changed in a way that would trigger automatic redirection.
-
-*config* (optional)
-
-Type: [Config](#config)
-
-### Customization
-
-It's highly recommended that you define your own AppRoute class extending the basic one, setting
-static `defaultConfig` on it. You can also override the `.compareStateFieldValue` if the fields of
-your Application State are to be compared in some more complicated way than simple equality.
-
-#### .compareStateFieldValue(requiredValue, actualValue, key)
-
-Returns: `boolean`
-
-*requiredValue*
-
-The value of the field in the `requiredState`
-
-*actualValue*
-
-The value of the field in the `actualState`
-
-*key*
-
-Type: `string`
-
-The field name
+Use this when you need to redirect the user to their previous location, but the Application State has not changed in a
+way that would trigger automatic redirection.
 
 ### Scripts
 
@@ -212,16 +168,31 @@ There are three scripts that will drastically speed up your development process.
 
 #### init
 
-Creates the general project structure
+`smart-react-routing init`
+
+Initialize the project structure.
 
 #### add-page-group
 
-`add-page-group auth`
+`smart-react-routing add-page-group --name auth`
 
-Initializes a "section" of an application
+Add a group of semantically similar pages.
 
 #### add-page
 
-`add-page auth sign-in /auth/sign-in`
+`smart-react-routing add-page --group auth --name SignIn --url /auth/sign-in`
 
-Adds a fresh page
+Add a new page
+
+#### Arguments
+
+All scripts accept two optional arguments in addition to the script-specific required ones. You can define them in
+`srr-config.json` so that you don't have to type them every time you call a script.
+
+*ts*
+
+Use Typescript templates (default - `false`).
+
+*root*
+
+The root directory for the project (default - `src`).
