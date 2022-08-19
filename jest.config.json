@@ -1,0 +1,12 @@
+{
+  "globals": {
+    "ts-jest": {
+      "tsconfig": "tsconfig.lib.json"
+    }
+  },
+  "testEnvironment": "jsdom",
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  "verbose": true
+}

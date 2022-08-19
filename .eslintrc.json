@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "jest": true
   },
   "extends": [
     "eslint:recommended",
@@ -67,9 +68,15 @@
       "maxDepth": 1
     }],
     "max-len": ["error", {
-      "code": 120
+      "code": 120,
+      "ignoreComments": true
     }],
-    "space-before-function-paren": ["error", "never"],
+    "space-before-function-paren": ["error",
+      {
+        "asyncArrow": "always",
+        "anonymous": "always",
+        "named": "never"
+      }],
     "@typescript-eslint/no-unused-vars": "error",
     "no-multiple-empty-lines": "error"
   }
