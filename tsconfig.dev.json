@@ -1,6 +1,6 @@
 {
   "extends": "./base-tsconfig.json",
-  "include": ["src", "examples/typescript"],
+  "include": ["src", "examples/typescript", "tests"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

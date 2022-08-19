@@ -32,13 +32,13 @@
     "import/resolver": {
       "typescript": {
         "project": [
-          "tsconfig.examples.json",
-          "tsconfig.lib.json"
+          "tsconfig.dev.json",
+          "tsconfig.prod.json"
         ]
       }
     }
   },
-  "ignorePatterns": ["scripts/**", "webpack.config.js"],
+  "ignorePatterns": ["scripts/**", "webpack.config.js", "lib"],
   "rules": {
     "indent": [
       "error",

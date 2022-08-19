@@ -20,7 +20,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'ts-loader',
         options: {
-          configFile: 'tsconfig.examples.json'
+          configFile: 'tsconfig.dev.json'
         },
       }
     ],
